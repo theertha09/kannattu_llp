@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -42,6 +43,8 @@ INSTALLED_APPS = [
     'login',
     'rest_framework_simplejwt',
     'hr',
+    'personaldetails',
+    'education'
 ]
 
 MIDDLEWARE = [
@@ -55,6 +58,16 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'kannattullp.urls'
+
+
+
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+FILE_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB
+DATA_UPLOAD_MAX_MEMORY_SIZE = 52428800  # 50MB
+FILE_UPLOAD_PERMISSIONS = 0o644
 
 TEMPLATES = [
     {
@@ -76,9 +89,9 @@ WSGI_APPLICATION = 'kannattullp.wsgi.application'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
-}
+    ),
 
+}
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
