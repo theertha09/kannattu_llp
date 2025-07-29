@@ -44,10 +44,13 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'hr',
     'personaldetails',
-    'education'
+    'education',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',  # Add this line at the top
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -58,8 +61,13 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'kannattullp.urls'
+CORS_ALLOW_ALL_ORIGINS = True
 
 
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8080",  # your frontend (React, etc.)
+    "https://yourdomain.com",
+]
 
 
 MEDIA_URL = '/media/'

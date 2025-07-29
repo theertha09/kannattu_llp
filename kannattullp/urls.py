@@ -23,6 +23,8 @@ urlpatterns = [
     path("api/",include("roles.urls")),
     path('api/', include('login.urls')),  # Include Login app URLs
     path('api/', include('personaldetails.urls')),  # Include Login app URLs
+    pip install django-cors-headers
+
     path('api/', include('education.urls')),  # Include Education app URLs
 
 ]
