@@ -45,11 +45,10 @@ class PersonalDetailsCreateAPIView(generics.CreateAPIView):
 
 
 # ✅ Retrieve & Update API View
-class PersonalDetailsRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
+class PersonalDetailsRetrieveUpdateDestroyByUUIDAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = PersonalDetails.objects.all()
     serializer_class = PersonalDetailsSerializer
-    lookup_field = 'id'
-
+    lookup_field = 'uuid'  # Use UUID instead of the default pk
 
 class ResidentialAddressCreateView(generics.CreateAPIView):
     queryset = ResidentialAddress.objects.all()
