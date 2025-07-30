@@ -33,6 +33,7 @@ class DocumentImage(models.Model):
         ('education', 'Education Certificate'),
         ('experience', 'Experience Letter'),
         ('police_clearance', 'Police Clearance Certificate'),
+        ('cibil_report', 'CIBIL Report'),
     ]
     
     document_upload = models.ForeignKey(
