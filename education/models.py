@@ -13,7 +13,8 @@ class EducationEmployment(models.Model):
     previous_employer = models.CharField(max_length=255, blank=True, null=True)
     experience_years = models.DecimalField(max_digits=4, decimal_places=1)
     joining_date = models.DateField()
-
+    branch = models.CharField(max_length=100)
+    designation = models.CharField(max_length=100)
     def __str__(self):
         return f"{self.user.full_name} - {self.highest_qualification}"
 

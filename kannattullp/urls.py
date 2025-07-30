@@ -24,5 +24,8 @@ urlpatterns = [
     path('api/', include('login.urls')),  # Include Login app URLs
     path('api/', include('personaldetails.urls')),  # Include Login app URLs
     path('api/', include('education.urls')),  # Include Education app URLs
+    path('api/', include('multipleimages.urls')),  # Include Education app URLs
+
+
 
 ]

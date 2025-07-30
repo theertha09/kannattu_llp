@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'personaldetails',
     'education',
     'corsheaders',
+    'multipleimages',
 ]
 
 MIDDLEWARE = [
