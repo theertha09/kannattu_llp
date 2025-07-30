@@ -71,3 +71,30 @@ class EducationEmploymentListAPIView(generics.ListAPIView):
     queryset = EducationEmployment.objects.all()
     serializer_class = EducationEmploymentSerializer
     pagination_class = PersonalPagination
+
+
+
+class EducationEmploymentListAPIView(generics.ListAPIView):
+    serializer_class = EducationEmploymentSerializer
+    pagination_class = PersonalPagination
+
+    def get_queryset(self):
+        user_id = self.kwargs.get('user_id')  # Get UUID from URL if provided
+        if user_id:
+            user = get_object_or_404(PersonalDetails, uuid=user_id)
+            return EducationEmployment.objects.filter(user=user)
+        return EducationEmployment.objects.all()
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response({
+            "code": 200,
+            "message": "",
+            "data": serializer.data
+        }, status=status.HTTP_200_OK)
