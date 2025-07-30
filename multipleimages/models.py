@@ -27,7 +27,8 @@ class DocumentImage(models.Model):
     """Model to store multiple images for a document"""
     DOCUMENT_TYPES = [
         ('passport', 'Passport Size Photo'),
-        ('aadhaar', 'Aadhaar Card'),
+        ('aadhaar_front', 'Aadhaar Card Front'),
+        ('aadhaar_back', 'Aadhaar Card Back'),
         ('pan', 'PAN Card'),
         ('voter_id', 'Voter ID Card'),
         ('education', 'Education Certificate'),
