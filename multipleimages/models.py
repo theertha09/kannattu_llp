@@ -32,6 +32,7 @@ class DocumentImage(models.Model):
         ('voter_id', 'Voter ID Card'),
         ('education', 'Education Certificate'),
         ('experience', 'Experience Letter'),
+        ('police_clearance', 'Police Clearance Certificate'),
     ]
     
     document_upload = models.ForeignKey(

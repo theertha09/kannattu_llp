@@ -26,6 +26,7 @@ class PersonalDetails(models.Model):
     ]
 
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    application_id = models.CharField(max_length=10, unique=True, blank=True, null=True)  # ONB001 etc.
     full_name = models.CharField(max_length=255)
     father_name = models.CharField(max_length=255)
     date_of_birth = models.DateField()
@@ -35,6 +36,17 @@ class PersonalDetails(models.Model):
     mobile_number = models.CharField(max_length=15)
     email = models.EmailField()
     emergency_contact_number = models.CharField(max_length=15)
+
+    def save(self, *args, **kwargs):
+        if not self.application_id:
+            last_id = PersonalDetails.objects.all().order_by('application_id').last()
+            if last_id and last_id.application_id:
+                last_number = int(last_id.application_id.replace("ONB", ""))
+                new_number = last_number + 1
+            else:
+                new_number = 1
+            self.application_id = f"ONB{new_number:03d}"
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.full_name
