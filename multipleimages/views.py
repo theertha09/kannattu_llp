@@ -4,6 +4,11 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from django.db import transaction
 from .models import DocumentUpload, DocumentImage
 from .serializers import DocumentUploadSerializer, DocumentImageSerializer
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from personaldetails.models import PersonalDetails
+from .serializers import DocumentUploadSerializer
 
 class DocumentUploadListCreateView(generics.ListCreateAPIView):
     serializer_class = DocumentUploadSerializer
@@ -67,3 +72,21 @@ def debug_view(request):
         'content_type': request.content_type,
         'message': 'API is working'
     })
+
+
+
+class DocumentUploadByUUIDView(APIView):
+    def get(self, request, user_uuid):
+        try:
+            user = PersonalDetails.objects.get(user_uuid=user_uuid)
+            document_upload = DocumentUpload.objects.filter(user=user).first()
+            if not document_upload:
+                return Response({'detail': 'No documents found for this user.'}, status=status.HTTP_404_NOT_FOUND)
+
+            serializer = DocumentUploadSerializer(document_upload, context={'request': request})
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        except PersonalDetails.DoesNotExist:
+            return Response({'error': 'User with this UUID does not exist.'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
