@@ -98,3 +98,26 @@ class UserDetailPatchByUUIDView(APIView):
             }, status=status.HTTP_400_BAD_REQUEST)
         except PersonalDetails.DoesNotExist:
             return Response({"code": 404, "error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+class ResidentialAddressListView(generics.ListAPIView):
+    serializer_class = ResidentialAddressSerializer
+    pagination_class = PersonalPagination
+
+    def get_queryset(self):
+        user_uuid = self.kwargs.get('user_uuid')
+        if user_uuid:
+            return ResidentialAddress.objects.filter(user__uuid=user_uuid)
+        return ResidentialAddress.objects.all()
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response({
+            "code": 200,
+            "message": "",
+            "data": serializer.data
+        }, status=status.HTTP_200_OK)
