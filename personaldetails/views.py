@@ -10,6 +10,7 @@ from rest_framework import status
 from .models import PersonalDetails
 from .serializers import UserDetailSummarySerializer
 
+from rest_framework.permissions import AllowAny
 
 # ✅ Custom Pagination Class
 class PersonalPagination(PageNumberPagination):
@@ -73,3 +74,27 @@ class UserDetailByUUIDView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except PersonalDetails.DoesNotExist:
             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+
+# ✅ ID Card Details - PATCH (Update) by UUID
+class UserDetailPatchByUUIDView(APIView):
+    permission_classes = [AllowAny]  # Use custom permission if needed
+
+    def patch(self, request, user_uuid):
+        try:
+            user = PersonalDetails.objects.get(uuid=user_uuid)
+            serializer = UserDetailSummarySerializer(user, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({
+                    "code": 200,
+                    "message": "User ID card details updated successfully",
+                    "data": serializer.data
+                }, status=status.HTTP_200_OK)
+            return Response({
+                "code": 400,
+                "message": "Invalid data",
+                "errors": serializer.errors
+            }, status=status.HTTP_400_BAD_REQUEST)
+        except PersonalDetails.DoesNotExist:
+            return Response({"code": 404, "error": "User not found"}, status=status.HTTP_404_NOT_FOUND)

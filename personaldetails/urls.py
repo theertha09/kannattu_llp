@@ -4,7 +4,7 @@ from .views import (
     PersonalDetailsCreateAPIView,
     PersonalDetailsRetrieveUpdateDestroyByUUIDAPIView,
     ResidentialAddressListView,
-    ResidentialAddressCreateView,ResidentialAddressDetailView,UserDetailByUUIDView
+    ResidentialAddressCreateView,ResidentialAddressDetailView,UserDetailByUUIDView,UserDetailPatchByUUIDView
 )
 
 urlpatterns = [
@@ -15,5 +15,7 @@ urlpatterns = [
     path('addresses/create/', ResidentialAddressCreateView.as_view(), name='address-create'),
     path('addresses/<int:id>/', ResidentialAddressDetailView.as_view(), name='address-detail'),
     path('idcards/<uuid:user_uuid>/', UserDetailByUUIDView.as_view(), name='user-detail-by-uuid'),
+    path('idcards/edit/<uuid:user_uuid>/', UserDetailPatchByUUIDView.as_view(), name='user-detail-edit'),
+
 
 ]
