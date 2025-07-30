@@ -14,7 +14,7 @@ class UserDetailSummarySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PersonalDetails
-        fields = ['uuid', 'full_name', 'mobile_number', 'date_of_birth', 'blood_group', 'address']
+        fields = ['uuid', 'full_name', 'mobile_number', 'date_of_birth', 'blood_group', 'address','emergency_contact_number']
 
     def get_address(self, obj):
         address_obj = obj.seller_details.first()
