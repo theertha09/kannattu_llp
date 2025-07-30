@@ -78,7 +78,7 @@ def debug_view(request):
 class DocumentUploadByUUIDView(APIView):
     def get(self, request, user_uuid):
         try:
-            user = PersonalDetails.objects.get(user_uuid=user_uuid)
+            user = PersonalDetails.objects.get(uuid=user_uuid)  # fixed line
             document_upload = DocumentUpload.objects.filter(user=user).first()
             if not document_upload:
                 return Response({'detail': 'No documents found for this user.'}, status=status.HTTP_404_NOT_FOUND)
