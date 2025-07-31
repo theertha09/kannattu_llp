@@ -1,15 +1,14 @@
-# views.py
-from rest_framework.generics import ListAPIView, RetrieveAPIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView, UpdateAPIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
-from django.db.models import Count
+from django.db.models import Count, Q
 from personaldetails.models import PersonalDetails
-from .serializers import PersonalDetailsSerializer
-from .serializers import StatusUpdateSerializer
-# ✅ Pagination class
-from rest_framework.generics import UpdateAPIView
+from .serializers import PersonalDetailsSerializer, StatusUpdateSerializer
+from datetime import datetime
 
+
+# ✅ Pagination class
 class UserDetailsPagination(PageNumberPagination):
     page_size = 10
     page_size_query_param = 'limit'
@@ -29,15 +28,48 @@ class UserDetailsPagination(PageNumberPagination):
         })
 
 
-# ✅ List View with pagination
+# ✅ List View with filters and pagination
 class AllUsersAndStatusCountView(ListAPIView):
-    queryset = PersonalDetails.objects.all().order_by('-created_at')
     serializer_class = PersonalDetailsSerializer
     pagination_class = UserDetailsPagination
 
+    def get_queryset(self):
+        queryset = PersonalDetails.objects.all().order_by('-created_at')
+
+        # ✅ Status filter
+        status_filter = self.request.query_params.get('status')
+        if status_filter:
+            queryset = queryset.filter(status=status_filter)
+
+        # ✅ Search by name/email (case-insensitive partial match)
+        search = self.request.query_params.get('search')
+        if search:
+            queryset = queryset.filter(
+                Q(name__icontains=search) | Q(email__icontains=search)
+            )
+
+        # ✅ Date range filtering
+        start_date = self.request.query_params.get('start_date')
+        end_date = self.request.query_params.get('end_date')
+
+        if start_date:
+            try:
+                start = datetime.strptime(start_date, '%Y-%m-%d').date()
+                queryset = queryset.filter(created_at__date__gte=start)
+            except ValueError:
+                pass  # Ignore invalid date
+
+        if end_date:
+            try:
+                end = datetime.strptime(end_date, '%Y-%m-%d').date()
+                queryset = queryset.filter(created_at__date__lte=end)
+            except ValueError:
+                pass  # Ignore invalid date
+
+        return queryset
+
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
-
         page = self.paginate_queryset(queryset)
         serializer = self.get_serializer(page, many=True)
 
@@ -76,6 +108,8 @@ class UserDetailByUUIDView(RetrieveAPIView):
 
         except PersonalDetails.DoesNotExist:
             return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+
+
 # ✅ PATCH API to update user status
 class UserStatusUpdateView(UpdateAPIView):
     queryset = PersonalDetails.objects.all()
