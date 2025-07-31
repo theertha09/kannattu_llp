@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'education',
     'corsheaders',
     'multipleimages',
+    'userdashboard',
 ]
 
 MIDDLEWARE = [
