@@ -24,6 +24,13 @@ class PersonalDetails(models.Model):
         ('AB+', 'AB+'), ('AB-', 'AB-'),
         ('O+', 'O+'), ('O-', 'O-'),
     ]
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('under_review', 'Under Review'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+    ]
+
 
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     application_id = models.CharField(max_length=10, unique=True, blank=True, null=True)  # ONB001 etc.
@@ -36,6 +43,15 @@ class PersonalDetails(models.Model):
     mobile_number = models.CharField(max_length=15)
     email = models.EmailField()
     emergency_contact_number = models.CharField(max_length=15)
+    created_at = models.DateTimeField(auto_now_add=True)
+        # New status field
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='pending'
+    )
+
+
 
     def save(self, *args, **kwargs):
         if not self.application_id:

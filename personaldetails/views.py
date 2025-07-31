@@ -9,6 +9,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from .models import PersonalDetails
 from .serializers import UserDetailSummarySerializer
+from personaldetails.models import PersonalDetails
+from personaldetails.serializers import UserDetailSerializer
 
 from rest_framework.permissions import AllowAny
 
@@ -121,3 +123,12 @@ class ResidentialAddressListView(generics.ListAPIView):
             "message": "",
             "data": serializer.data
         }, status=status.HTTP_200_OK)
+class UserDetailByUUIDAPIView(APIView):
+    def get(self, request, uuid):
+        try:
+            user = PersonalDetails.objects.get(uuid=uuid)
+        except PersonalDetails.DoesNotExist:
+            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = UserDetailSerializer(user, context={'request': request})
+        return Response(serializer.data)
