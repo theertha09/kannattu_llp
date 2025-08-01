@@ -112,7 +112,7 @@ DATABASES = {
         'NAME': 'kannattudatabse',
         'USER': 'kannattu',
         'PASSWORD': 'FrO3hd6M68EeS3x8v2cYO3RB7G4o244Q',
-        'HOST': 'dpg-d265pdali9vc73cshdo0-a',
+        'HOST': 'dpg-d265pdali9vc73cshdo0-a.oregon-postgres.render.com',
         'PORT': '5432',
     }
 }
