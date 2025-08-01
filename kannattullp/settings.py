@@ -96,22 +96,27 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'kannattullp.wsgi.application'
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ),
+# REST_FRAMEWORK = {
+#     'DEFAULT_AUTHENTICATION_CLASSES': (
+#         'rest_framework_simplejwt.authentication.JWTAuthentication',
+#     ),
 
-}
+# }
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'kannattudatabse',
+        'USER': 'kannattu',
+        'PASSWORD': 'FrO3hd6M68EeS3x8v2cYO3RB7G4o244Q',
+        'HOST': 'dpg-d265pdali9vc73cshdo0-a',
+        'PORT': '5432',
     }
 }
+
 
 
 # Password validation
