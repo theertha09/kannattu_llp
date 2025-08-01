@@ -70,7 +70,9 @@ CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8080",  # your frontend (React, etc.)
     "https://yourdomain.com",
+    "http://kannattuobroadhrms.vercel.app",
 ]
+
 
 
 MEDIA_URL = '/media/'
