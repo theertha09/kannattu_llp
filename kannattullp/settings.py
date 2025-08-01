@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-2d3t1ui4ofpit&g#-4v#a#@jv*yj$0apa)(54j-2a_4p3lk3ia
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]  # Allow all hosts for development; adjust in production
 
 
 # Application definition
@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'multipleimages',
     'userdashboard',
+
 ]
 
 MIDDLEWARE = [
