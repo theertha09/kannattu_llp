@@ -45,7 +45,8 @@ class DocumentImage(models.Model):
         on_delete=models.CASCADE, 
         related_name='images'
     )
-    image = models.ImageField(upload_to=upload_to)
+    image = models.FileField(upload_to=upload_to)  # <-- CHANGED FROM ImageField TO FileField
+
     document_type = models.CharField(max_length=20, choices=DOCUMENT_TYPES)
     original_filename = models.CharField(max_length=255)
     file_size = models.PositiveIntegerField()  # in bytes

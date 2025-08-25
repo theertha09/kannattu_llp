@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import DocumentUpload, DocumentImage
 from django.core.files.images import get_image_dimensions
+from django.core.exceptions import ValidationError as DjangoValidationError
 from personaldetails.models import PersonalDetails
 
 class DocumentImageSerializer(serializers.ModelSerializer):
@@ -21,7 +22,7 @@ class DocumentImageSerializer(serializers.ModelSerializer):
 class DocumentUploadSerializer(serializers.ModelSerializer):
     images = DocumentImageSerializer(many=True, read_only=True)
     uploaded_images = serializers.ListField(
-        child=serializers.ImageField(),
+        child=serializers.FileField(),  # <-- Updated: allow any file
         write_only=True,
         required=False
     )
@@ -48,36 +49,45 @@ class DocumentUploadSerializer(serializers.ModelSerializer):
         except Exception as e:
             raise serializers.ValidationError(f"Invalid UUID format: {str(e)}")
     
-    def validate_uploaded_images(self, images):
-        """Validate each uploaded image"""
-        if not images:
-            return images
+    def validate_uploaded_images(self, files):
+        """Validate each uploaded file (image or PDF)"""
+        if not files:
+            return files
             
-        for image in images:
-            # Check file size (max 5MB)
-            max_size = 5 * 1024 * 1024  # 5MB
-            if image.size > max_size:
-                raise serializers.ValidationError(f"Image {image.name} is too large. Maximum size is 5MB.")
-            
-            # Check file format
-            allowed_formats = ['JPEG', 'JPG', 'PNG', 'PDF']
-            ext = image.name.split('.')[-1].upper()
-            if ext not in allowed_formats:
+        allowed_image_formats = ['JPEG', 'JPG', 'PNG']
+        allowed_file_formats = allowed_image_formats + ['PDF']
+        max_size = 5 * 1024 * 1024  # 5MB
+
+        for f in files:
+            if f.size > max_size:
+                raise serializers.ValidationError(f"File {f.name} is too large. Maximum size is 5MB.")
+
+            ext = f.name.split('.')[-1].upper()
+            if ext not in allowed_file_formats:
                 raise serializers.ValidationError(
-                    f"Unsupported file format for {image.name}. Please use JPEG, JPG, PNG, or PDF."
+                    f"Unsupported file format for {f.name}. Please use JPEG, JPG, PNG, or PDF."
                 )
-        
-        return images
+
+            if ext in allowed_image_formats:
+                # Validate as image
+                try:
+                    get_image_dimensions(f)  # raises ValidationError if not a valid image
+                except DjangoValidationError:
+                    raise serializers.ValidationError(f"{f.name} is not a valid image file.")
+
+            # PDFs: no further validation required.
+
+        return files
     
     def validate(self, data):
-        """Validate that images and document_types have same length"""
+        """Validate that uploaded_images and document_types have the same length"""
         uploaded_images = data.get('uploaded_images', [])
         document_types = data.get('document_types', [])
         
         if uploaded_images and document_types:
             if len(uploaded_images) != len(document_types):
                 raise serializers.ValidationError(
-                    "Number of images must match number of document types."
+                    "Number of uploaded files must match number of document types."
                 )
         
         # Validate document types
@@ -111,15 +121,15 @@ class DocumentUploadSerializer(serializers.ModelSerializer):
                 document_upload.save()
             
             # Create DocumentImage instances
-            for i, image in enumerate(uploaded_images):
+            for i, file in enumerate(uploaded_images):
                 document_type = document_types[i] if i < len(document_types) else 'passport'
                 
                 DocumentImage.objects.create(
                     document_upload=document_upload,
-                    image=image,
+                    image=file,
                     document_type=document_type,
-                    original_filename=image.name,
-                    file_size=image.size
+                    original_filename=file.name,
+                    file_size=file.size
                 )
             
             return document_upload

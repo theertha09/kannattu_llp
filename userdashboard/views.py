@@ -45,6 +45,12 @@ class AllUsersAndStatusCountView(ListAPIView):
         if status:
             queryset = queryset.filter(status=status)
 
+        # ✅ Filter by branch (from related EducationEmployment model)
+        branch = self.request.query_params.get('branch')
+        if branch:
+            queryset = queryset.filter(education_employment__branch=branch)
+
+
         # ✅ Search by full_name or email (partial match)
         search = self.request.query_params.get('search')
         if search:
