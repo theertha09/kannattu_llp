@@ -3,7 +3,7 @@ from .views import (
     PersonalDetailsListAPIView,
     PersonalDetailsCreateAPIView,
     PersonalDetailsRetrieveUpdateDestroyByUUIDAPIView,
-    ResidentialAddressListView,
+    ResidentialAddressListView,DeleteUserByUUIDAPIView,
     ResidentialAddressCreateView,ResidentialAddressDetailView,UserDetailByUUIDView,UserDetailPatchByUUIDView,UserDetailByUUIDAPIView
 )
 
@@ -15,6 +15,7 @@ urlpatterns = [
     path('addresses/create/', ResidentialAddressCreateView.as_view(), name='address-create'),
     path('address/list/<uuid:user_uuid>/', ResidentialAddressListView.as_view(), name='residential-address-user-list'),
     path('user/<uuid:uuid>/', UserDetailByUUIDAPIView.as_view(), name='user-detail-by-uuid'),
+    path('user/delete/<uuid:uuid>/', DeleteUserByUUIDAPIView.as_view(), name='delete-user-by-uuid'),
 
     path('addresses/<int:id>/', ResidentialAddressDetailView.as_view(), name='address-detail'),
     path('idcards/<uuid:user_uuid>/', UserDetailByUUIDView.as_view(), name='user-detail-by-uuid'),

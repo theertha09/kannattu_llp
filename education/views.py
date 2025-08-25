@@ -6,8 +6,6 @@ from .serializers import EducationEmploymentSerializer
 from personaldetails.models import PersonalDetails
 from rest_framework.pagination import PageNumberPagination
 
-
-# ✅ Custom Pagination Class
 class PersonalPagination(PageNumberPagination):
     page_size = 10
     page_size_query_param = 'limit'

@@ -132,3 +132,18 @@ class UserDetailByUUIDAPIView(APIView):
 
         serializer = UserDetailSerializer(user, context={'request': request})
         return Response(serializer.data)
+
+
+
+class DeleteUserByUUIDAPIView(APIView):
+    def delete(self, request, uuid):
+        try:
+            user = PersonalDetails.objects.get(uuid=uuid)
+        except PersonalDetails.DoesNotExist:
+            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        user.delete()
+        return Response({'message': 'User deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
+
+        user.delete()
+        return Response({'message': 'User deleted successfully'}, status=status.HTTP_204_NO_CONTENT)

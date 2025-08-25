@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
+from datetime import timedelta
 
 from pathlib import Path
 import os
@@ -48,6 +49,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'multipleimages',
     'userdashboard',
+    'meripehchaan',
+    'resign',
 
 ]
 
@@ -65,6 +68,19 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'kannattullp.urls'
 CORS_ALLOW_ALL_ORIGINS = True
+
+
+
+APISETU_CLIENT_ID = os.getenv("APISETU_CLIENT_ID", "XI865B1FF4")
+APISETU_CLIENT_SECRET = os.getenv("APISETU_CLIENT_SECRET", "")
+APISETU_REDIRECT_URI = os.getenv("APISETU_REDIRECT_URI", "https://hrms.pixelsoft.online/api/meripehchaan/callback/")
+APISETU_AUTH_URL = os.getenv("APISETU_AUTH_URL", "https://auth.meripehchaan.gov.in/authorize")
+APISETU_TOKEN_URL = os.getenv("APISETU_TOKEN_URL", "https://auth.meripehchaan.gov.in/token")
+APISETU_RESOURCE_BASE = os.getenv("APISETU_RESOURCE_BASE", "https://consume.apisetu.gov.in")
+# optional: set a timeout
+APISETU_REQUEST_TIMEOUT = float(os.getenv("APISETU_REQUEST_TIMEOUT", "10"))
+# secret key for signing state tokens (defaults to Django SECRET_KEY)
+STATE_SIGNING_KEY = os.getenv("STATE_SIGNING_KEY", SECRET_KEY)
 
 
 CORS_ALLOWED_ORIGINS = [
@@ -98,27 +114,46 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'kannattullp.wsgi.application'
-# REST_FRAMEWORK = {
-#     'DEFAULT_AUTHENTICATION_CLASSES': (
-#         'rest_framework_simplejwt.authentication.JWTAuthentication',
-#     ),
 
-# }
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
+
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=7),  # 🔁 change to your desired time
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=30),
+    'ROTATE_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': True,
+
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
+}
+
+
+WSGI_APPLICATION = 'kannattullp.wsgi.application'
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'kannattudatabse',
-        'USER': 'kannattu',
-        'PASSWORD': 'FrO3hd6M68EeS3x8v2cYO3RB7G4o244Q',
-        'HOST': 'dpg-d265pdali9vc73cshdo0-a.oregon-postgres.render.com',
-        'PORT': '5432',
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'kannattudatabse',
+#         'USER': 'kannattu',
+#         'PASSWORD': 'FrO3hd6M68EeS3x8v2cYO3RB7G4o244Q',
+#         'HOST': 'dpg-d265pdali9vc73cshdo0-a.oregon-postgres.render.com',
+#         'PORT': '5432',
+#     }
+# }
 
 
 
@@ -163,3 +198,5 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
